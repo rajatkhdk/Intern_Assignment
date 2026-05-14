@@ -1,18 +1,21 @@
 # NLP Resume Matcher — Python 3.9+
 # Install with: pip install -r requirements.txt
 
-# ── Web UI ─────────────────────────────────────────────────────────────────────
+# Web UI
 streamlit==1.35.0
 
-# ── PDF Extraction ─────────────────────────────────────────────────────────────
+# PDF Extraction
 pdfplumber==0.11.0
 
-# ── NLP / Text Processing ──────────────────────────────────────────────────────
+# NLP / Text Processing
 nltk==3.8.1
 
-# ── Machine Learning / Similarity ─────────────────────────────────────────────
+# Machine Learning / Similarity
 scikit-learn==1.5.0
 numpy==1.26.4
 
-# ── Testing ────────────────────────────────────────────────────────────────────
+# Testing
 pytest==8.2.1
+
+# Generate pdf
+reportlab==4.2.0

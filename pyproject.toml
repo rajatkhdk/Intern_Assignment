@@ -9,6 +9,10 @@ dependencies = [
     "numpy==1.26.4",
     "pdfplumber==0.11.0",
     "pytest==8.2.1",
+    "reportlab==4.2.0",
     "scikit-learn==1.5.0",
     "streamlit==1.35.0",
 ]
+[tool.pytest.ini_options]
+pythonpath = ["resume_task"]
+testpaths = ["resume_task/tests"]

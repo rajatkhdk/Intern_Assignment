@@ -5,7 +5,7 @@ def extract_text_from_pdf(file_path: str) -> str:
     """Extract all text from a PDF file."""
 
     if not os.path.exists(file_path):
-        raise ValueError(f"File not found: {file_path}")
+        raise FileNotFoundError(f"File not found: {file_path}")
     
     ext = os.path.splitext(file_path)[-1].lower()
     # print("extension : ",ext)
