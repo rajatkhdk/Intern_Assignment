@@ -14,5 +14,5 @@ wheels/
 .env.*
 
 # exclude folders
-NLP resume
+NLP_resume
 resume_task/data

@@ -5,14 +5,19 @@ description = "Add your description here"
 readme = "README.md"
 requires-python = ">=3.12"
 dependencies = [
+    "fastapi>=0.111.0",
+    "mediapipe==0.10.14",
     "nltk==3.8.1",
     "numpy==1.26.4",
+    "opencv-python==4.10.0.84",
     "pdfplumber==0.11.0",
     "pytest==8.2.1",
     "reportlab==4.2.0",
     "scikit-learn==1.5.0",
     "streamlit==1.35.0",
+    "uvicorn[standard]>=0.29.0",
+    "websockets>=12.0",
 ]
 [tool.pytest.ini_options]
-pythonpath = ["resume_task"]
-testpaths = ["resume_task/tests"]
+pythonpath = ["NLP_resume/face_mesh"]
+testpaths = ["NLP_resume/face_mesh/tests"]
