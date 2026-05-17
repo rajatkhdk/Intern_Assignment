@@ -16,3 +16,5 @@ wheels/
 # exclude folders
 NLP_resume
 resume_task/data
+data/archive
+data/RAVDESS

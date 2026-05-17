@@ -46,7 +46,7 @@ def linear_to_ulaw(sample: int) -> int:
     return ulaw_byte
 
 def generate_ulaw_chunk(chunk_index: int) -> bytes:
-    chunk_data = bytearray()
+    chunk_data = []
     for i in range(SAMPLES_PER_CHUNK):
         t = (chunk_index * SAMPLES_PER_CHUNK + i) / SAMPLE_RATE
         sample = int(32767 * math.sin(2 * math.pi * TONE_HZ * t))
@@ -57,13 +57,16 @@ def generate_ulaw_chunk(chunk_index: int) -> bytes:
 # Client
 
 async def run_client():
+    log.info("Connecting to server at %s", SERVER_URL)
+
     async with websockets.connect(SERVER_URL) as ws:
         log.info("Connected to server")
 
         # Send CONNECTED message
         await ws.send(json.dumps({
             "event": "connected",
-            "streamSid": STREAM_SID,
+            "protocol": "Call",
+            'version': "1.0.0",
         }))
         log.info("Sent CONNECTED")
 
@@ -72,75 +75,70 @@ async def run_client():
             "event": "start",
             "streamSid": STREAM_SID,
             "start": {
-                "encoding": "mulaw",
+                "accountSid": "ACtest",
+                "streamSid": STREAM_SID,
+                "callSid": "CAtest_call",
+                "tracks": ["inbound"],
+                "encoding": "audio/x-mulaw",
                 "sampleRate": SAMPLE_RATE,
             }
         }))
-        log.info("Sent START")
+        log.info("Sent START (streamSid=%s)", STREAM_SID)
 
-        # Stream MEDIA messages
-        for chunk_index in range(NUM_CHUNKS):
-            chunk_data = generate_ulaw_chunk(chunk_index)
-            chunk_b64 = base64.b64encode(chunk_data).decode("ascii")
+        # Streaming audio chunks
+        echoes_received = 0
+        marks_received  = 0
+
+        for chunk_num in range(1, NUM_CHUNKS + 1):
+            # Generate and send one audio chunk
+            raw_audio  = generate_ulaw_chunk(chunk_num - 1)
+            payload_b64 = base64.b64encode(raw_audio).decode()
+            timestamp   = str(int(time.time() * 1000))
+
             await ws.send(json.dumps({
                 "event": "media",
                 "streamSid": STREAM_SID,
                 "media": {
-                    "payload": chunk_b64,
-                    "chunkNum": chunk_index + 1,
+                    "track": "inbound",
+                    "chunk": chunk_num,
+                    "timestamp": timestamp,
+                    "payload": payload_b64,
                 }
             }))
-            log.info(f"Sent MEDIA chunk {chunk_index + 1}/{NUM_CHUNKS}")
-            await asyncio.sleep(CHUNK_MS / 1000)  # simulate real-time streaming
+            log.info(" Sent chunk #%d  (%d B)", chunk_num, len(raw_audio))
 
-            # Streaming audio chunks
-            echoes_received = 0
-            marks_received  = 0
+            # Receive echo + mark
+            for _ in range(2):
+                try:
+                    response = await asyncio.wait_for(ws.recv(), timeout=5)
+                    msg = json.loads(response)
+                    event = msg.get("event")
 
-            for chunk_num in range(1, NUM_CHUNKS + 1):
-                # Generate and send one audio chunk
-                raw_audio  = generate_ulaw_chunk(chunk_num - 1)
-                payload_b64 = base64.b64encode(raw_audio).decode()
-                timestamp   = str(int(time.time() * 1000))
+                    if event == "media":
+                        echoes_received += 1
+                        log.info(" Received echo chunk #%d  (%d B)", msg["media"]["chunkNum"], len(base64.b64decode(msg["media"]["payload"])))
+                    elif event == "mark":
+                        marks_received += 1
+                        log.info(" Received mark: %s", msg["mark"]["name"])
+                    else:
+                        log.warning(" Received unknown message: %s", msg)
 
-                await ws.send(json.dumps({
-                    "event": "media",
-                    "streamSid": STREAM_SID,
-                    "media": {
-                        "track": "inbound",
-                        "chunk": chunk_num,
-                        "timestamp": timestamp,
-                        "payload": payload_b64,
-                    }
-                }))
-                log.info("→  Sent chunk #%d  (%d B)", chunk_num, len(raw_audio))
+                except asyncio.TimeoutError:
+                    log.error("Timeout waiting for response to chunk #%d", chunk_num)
+                    break
 
-                # Receive echo + mark
-                for _ in range(2):
-                    try:
-                        response = await asyncio.wait_for(ws.recv(), timeout=5)
-                        msg = json.loads(response)
-
-                        if "media" in msg:
-                            echoes_received += 1
-                            log.info("←  Received echo chunk #%d  (%d B)", msg["media"]["chunkNum"], len(msg["media"]["payload"]))
-                        elif "mark" in msg:
-                            marks_received += 1
-                            log.info("←  Received mark: %s", msg["mark"]["name"])
-                        else:
-                            log.warning("←  Received unknown message: %s", msg)
-
-                    except asyncio.TimeoutError:
-                        log.error("Timeout waiting for response to chunk #%d", chunk_num)
-                        break
-
-                # Small delay between chunks (realistic pacing)
-                await asyncio.sleep(CHUNK_MS / 1000)
+            # Small delay between chunks (realistic pacing)
+            await asyncio.sleep(CHUNK_MS / 1000)
 
         # Send STOP message
         await ws.send(json.dumps({
             "event": "stop",
             "streamSid": STREAM_SID,
+            "stop": {
+                "accountSid": "ACtest",
+                "streamSid": STREAM_SID,
+                "callSid": "CAtest_call"
+            }
         }))
         log.info("Sent STOP")
 
@@ -148,8 +146,12 @@ async def run_client():
         await asyncio.sleep(1)
 
     # Summary
-    log.info("Stream complete: sent %d chunks, received %d echoes and %d marks",
-             NUM_CHUNKS, echoes_received, marks_received)
+    log.info("-" * 50)
+    log.info("Session completed")
+    log.info("Chunks sent: %d", NUM_CHUNKS)
+    log.info("Echoes received: %d", echoes_received)
+    log.info("Marks received: %d", marks_received)
+
     
 if __name__ == "__main__":
     asyncio.run(run_client())
