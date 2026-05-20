@@ -1,6 +1,6 @@
-from resume_task.src.extractor.pdf_extractor import extract_text_from_pdf
-from resume_task.src.extractor.text_cleaner import clean_text
-from resume_task.src.scorer.tfidf_cosine import create_tfidf_vectors, compute_cosine_similarity
+from src.extractor.pdf_extractor import extract_text_from_pdf
+from src.extractor.text_cleaner import clean_text
+from src.scorer.tfidf_cosine import create_tfidf_vectors, compute_cosine_similarity
 
 def main():
     # Example usage
@@ -15,7 +15,7 @@ def main():
         # print("\nCleaned Text:\n", cleaned_text1)
 
         cleaned_text1 = clean_text("""AI ML Rajat""")
-        cleaned_text2 = clean_text("""AI CV Rajat""")
+        cleaned_text2 = clean_text("""AI CVis Rajat""")
 
         # For demonstration, using the cleaned text as both resume and job description
         vectors, feature_names = create_tfidf_vectors(cleaned_text1, cleaned_text2)
