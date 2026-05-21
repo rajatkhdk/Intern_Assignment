@@ -5,6 +5,30 @@ A python application that compares a candidate's **PDF resume** with a **job des
 ---
 ## Architecture and Methodology
 
+---
+
+# Features
+
+- Resume text extraction from PDF files
+- NLP preprocessing pipeline
+- Tokenization and lemmatization
+- Stopword removal
+- TF-IDF vectorization
+- Cosine similarity scoring
+- Unit testing using pytest
+
+---
+
+# Tech Stack
+
+- Python
+- NLTK
+- Scikit-learn
+- pdfplumber
+- pytest
+
+---
+
 ### Step by step logic
 
 | Step | What happens | Library |
@@ -16,41 +40,26 @@ A python application that compares a candidate's **PDF resume** with a **job des
 
 ## Installation and Running Locally
 
-### Prerequisutes
-- python **3.9 or higher**
-- pip
+### Prerequisites:
+Complete the installation process in the root folder.
 
-### 1. Clone the repository
-
+### Change directory
 ```bash
-git clone https://github.com/rajatkhdk/Intern_Assignment
+cd resume_task
 ```
 
-### 2. Create and activate a virtual environment
-
-```bash
-python -m venv
-
-# Linux
-source venv/bin/activate
-
-# Windows
-venv/Scripts/activate
-```
-
-### 3. Install Dependencies
-
-```bash
-pip install -r requirements.txt
-```
-
-### 4. Download the NLTK data (auto-downloaded on first run or manually)
+### Download the NLTK data (auto-downloaded on first run or manually)
 
 ```bash
 python -c "import nltk; [nltk.download(r) for r in ('punkt','punkt_tab','stopwords','wordnet','omw-1.4')]"
 ```
 
-## Running tests
+### Running tests
 ```bash
 pytest tests/ -v
+```
+
+### Running the app
+```bash
+python app.py
 ```

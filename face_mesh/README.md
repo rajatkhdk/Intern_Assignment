@@ -20,3 +20,14 @@ Draws three different landmarks connection :
 1. FACEMESH_TESSELATION -> (triangular mesh around the face)
 2. FACEMESH_CONTOURS -> (outlines of feartures like jawline, eyes, nose, lips)
 3. FACEMESH_IRISES -> (Small circles around pupils)
+
+# Running the project
+```bash
+cd face_mesh
+python app.py
+```
+
+### Quit webcam
+```
+q
+```
