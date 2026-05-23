@@ -17,17 +17,6 @@ The projects were built using Python and modern AI/ML library such as :
 - Playwright
 - Django
 
-## Architecture and Methodology
-
-### Step by step logic
-
-| Step | What happens | Library |
-|------|--------------|---------|
-| **1. Extract** | PDF pages are read and text concatenated | `pdfplumber` |
-| **2. Clean** | Lowercase -> remove whitespace/unicode characters/URLS/emails/ phone numbers / special characters -> tokenize -> remove stop words -> lemmatize | `NLTK` |
-| **3. Vectorize** | Both resume and job description texts converted to TF-IDF vectors | `sklearn` |
-| **4. Similarity** | Cosine similarity score between TF-IDF vectors | `sklearn` |
-
 ## Installation and Running Locally
 
 ### Prerequisutes
