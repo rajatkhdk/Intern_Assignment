@@ -36,8 +36,8 @@ def main():
             break
 
         # Toggle mesh
-        elif key == ord("m"):
-            renderer.toggle_mesh()
+        # elif key == ord("m"):
+        #     renderer.toggle_mesh()
 
     webcam.release()
 

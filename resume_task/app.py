@@ -30,14 +30,10 @@ def calculate_similarity(resume_file, job_description):
             job_description
         )
 
-        jd_skill_set = set(job_skills)
-
-        print(jd_skill_set)
-        print("\n\n")
-        print(job_skills)
-        print("\n\n")
-        print(resume_skills)
-        print("\n\n")
+        # print(job_skills)
+        # print("\n\n")
+        # print(resume_skills)
+        # print("\n\n")
         filtered_resume_skills = []
             
         for skill in resume_skills.split():

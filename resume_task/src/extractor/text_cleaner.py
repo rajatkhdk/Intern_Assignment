@@ -8,6 +8,14 @@ from nltk.corpus import wordnet
 from nltk import pos_tag
 from nltk.chunk import RegexpParser
 
+# ── Download required NLTK data (idempotent) ───────────────────────────────────
+for resource in ("punkt", "punkt_tab", "stopwords", "wordnet", "omw-1.4"):
+        nltk.download(resource, quiet=True)
+nltk.download("averaged_perceptron_tagger_eng", quiet=True)
+
+_STOP_WORDS = set(stopwords.words("english"))
+_LEMMATIZER = WordNetLemmatizer()
+
 IMPORTANT_POS = {
     "NN", "NNS", "NNP", "NNPS",  # Nouns
 }
@@ -37,13 +45,7 @@ def extract_skills(text):
 
     return clean_skill
 
-# ── Download required NLTK data (idempotent) ───────────────────────────────────
-for resource in ("punkt", "punkt_tab", "stopwords", "wordnet", "omw-1.4"):
-        nltk.download(resource, quiet=True)
-nltk.download("averaged_perceptron_tagger_eng", quiet=True)
 
-_STOP_WORDS = set(stopwords.words("english"))
-_LEMMATIZER = WordNetLemmatizer()
 
 def clean_text(text: str) -> str:
     """NLP preprocessing pipeline: lowercase, remove special chars/numbers, tokenise, remove stop words, lemmatise."""
